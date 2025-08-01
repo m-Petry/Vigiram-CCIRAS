@@ -50,7 +50,7 @@ Vigiram/
   ```sql
   WHERE
     "source"."dthr_entrada" >= timestamp '2025-01-01 00:00:00.000'
-    AND "source"."dthr_entrada" <  timestamp '2025-07-01 00:00:00.000'
+    AND "source"."dthr_entrada" <  timestamp '2025-07-31 00:00:00.000'
   ```
 
   *(exemplo: janeiro a junho de 2025)*
