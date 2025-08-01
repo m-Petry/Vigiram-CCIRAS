@@ -16,6 +16,9 @@ Vigiram/
 
 ## 1 ▪ Extrair os CSVs do Metabase (salvar todos em `data/`)
 
+* Abra a coleção **Vigiram/BR GLASS** do Metabase:
+[Coleção Vigiram/BR GLASS](http://relatorios.hc-ufpe.ebserh/collection/591-vigiram-br-glass Coleção Vigiram/BR GLASS)
+
 **ITS – Perfis de Resistência (Vigiram)**
 
 * Ajuste o filtro **`dthr_entrada`** para o mês (ex.: *jul 1–31, 2025*).
