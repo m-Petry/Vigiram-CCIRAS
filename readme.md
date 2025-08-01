@@ -50,9 +50,8 @@ Vigiram/
   ```sql
   WHERE
     "source"."dthr_entrada" >= timestamp '2025-01-01 00:00:00.000'
-    AND "source"."dthr_entrada" <  timestamp '2025-07-31 00:00:00.000'
+    AND "source"."dthr_entrada" <  timestamp '2025-07-01 00:00:00.000'
   ```
-
   *(exemplo: janeiro a junho de 2025)*
 * Execute e baixe como **`Contagem pacientes amostra positiva.csv`** em `data/`.
 
@@ -75,9 +74,9 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-2. Abra o **VS Code** (extensões **Python** e **Jupyter** ativas).
+2. Abra o **VS Code** (instale as extensões **Python** e **Jupyter**).
 3. Abra `metabaseToCSV/MetabaseToCSV.ipynb`.
-4. Na primeira célula, ajuste o ano (ex.: `ANO_DESEJADO = "25"`).
+4. Na **terceira célula**, ajuste o ano (ex.: `ANO = "25"`).
 5. **Run All**. Os arquivos `vigiram-[mmm][aa].csv` serão gerados em `data/`.
 
 ---
@@ -85,15 +84,16 @@ pip install -r requirements.txt
 ## 3 ▪ Converter para BR-GLASS com **CSVtoXLSX.ipynb**
 
 1. Abra `CSVtoXLSX/CSVtoXLSX.ipynb`.
+2. Na **última célula**, ajuste o ano (ex.: `processar_todos_arquivos_ano("25")`)
 
-2. **Run All**. O notebook:
+3. **Run All**. O notebook:
 
    * lê todos os `vigiram-*.csv` da pasta `data/`;
    * lê também `Contagem pacientes amostra positiva.csv` e `… amostras negativas.csv` de `data/`;
    * grava, em `outputs/`, os arquivos finais:
      `Copia_de_Modelo_BR-GLASS_vigiram-[mmm][aa].xlsx`.
 
-3. Envie os `.xlsx` de `outputs/` para a **UACAP** validar e submeter.
+4. Envie os `.xlsx` de `outputs/` para a **UACAP** validar e submeter.
 
 ---
 
