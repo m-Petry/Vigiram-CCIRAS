@@ -17,7 +17,7 @@ Vigiram/
 ## 1 ▪ Extrair os CSVs do Metabase (salvar todos em `data/`)
 
 * Abra a coleção **Vigiram/BR GLASS** do Metabase:
-[Coleção Vigiram/BR GLASS](http://relatorios.hc-ufpe.ebserh/collection/591-vigiram-br-glass Coleção Vigiram/BR GLASS)
+[Coleção Vigiram/BR GLASS](http://relatorios.hc-ufpe.ebserh/collection/591-vigiram-br-glass "Coleção Vigiram/BR GLASS")
 
 **ITS – Perfis de Resistência (Vigiram)**
 
