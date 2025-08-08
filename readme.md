@@ -97,6 +97,18 @@ pip install -r requirements.txt
 
 ---
 
+## 4 ▪ Gerar planilhas CCIRAS com **CSVtoCCIRAS.ipynb**
+
+1. Abra `CSVtoCCIRAS/CSVtoCCIRAS.ipynb`.
+2. Ajuste os caminhos na última célula para os arquivos desejados ou use `processar_todos_arquivos_ano`.
+3. **Run All**. O notebook lê os mesmos `vigiram-*.csv` e contagens de pacientes de `data/` e gera em `outputs/` o arquivo `CCIRAS_vigiram-[mmm][aa].xlsx` com quatro abas:
+   * **Isolados Detalhados**
+   * **Sensibilidade**
+   * **Tendência Temporal**
+   * **Indicadores**
+
+---
+
 ### Dicas
 
 * Para um mês específico:
