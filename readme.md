@@ -97,6 +97,18 @@ pip install -r requirements.txt
 
 ---
 
+## 4 ▪ Gerar planilhas CCIRAS com **CSVtoCCIRAS.ipynb**
+
+1. Abra `CSVtoCCIRAS/CSVtoCCIRAS.ipynb`.
+2. Na **última célula**, ajuste o ano (ex.: `processar_todos_arquivos_ano("25")`).
+3. **Run All**. O notebook:
+
+   * lê todos os `vigiram-*.csv` e os arquivos de contagem em `data/`;
+   * grava, em `outputs/`, `cciras-[mmm][aa].xlsx` com as abas:
+     *Isolados Detalhados*, *Sensibilidade*, *Tendência Temporal* e *Indicadores Epidemiológicos*.
+
+---
+
 ### Dicas
 
 * Para um mês específico:
