@@ -34,21 +34,6 @@ O pipeline de dados é executado em fases distintas, utilizando três notebooks 
         * **`notebooks/CSVtoXLSX.ipynb`**: Converte os dados para o formato exigido pelo sistema **BR-GLASS**. Realiza mapeamentos complexos para códigos numéricos e gera a planilha `Copia_de_Modelo_BR-GLASS_*.xlsx` na pasta `outputs/`.
         * **`notebooks/GeradorRelatorioCCIRAS.ipynb`**: Gera um relatório analítico detalhado para a **CCIRAS**. Cria a planilha `Relatorio_CCIRAS_HC-UFPE_*.xlsx` focada em vigilância epidemiológica, mantendo os nomes originais dos dados, na pasta `outputs/`.
 
-```mermaid
-graph TD
-    subgraph "Fase 1: Extração e Consolidação"
-        A[CSVs Brutos do Metabase] -->|Salvar em /data| B(notebooks/MetabaseToCSV.ipynb);
-        B --> C[CSV Consolidado: vigiram-*.csv];
-    end
-
-    subgraph "Fase 2: Geração de Relatórios"
-        C --> D(notebooks/CSVtoXLSX.ipynb);
-        C --> E(notebooks/GeradorRelatorioCCIRAS.ipynb);
-        D --> F[Planilha BR-GLASS.xlsx];
-        E --> G[Planilha CCIRAS.xlsx];
-    end
-```
-
 ## 🚀 Como Usar
 
 ### Passo 1: Configuração do Ambiente
