@@ -1,121 +1,135 @@
-### Guia rápido – Pipeline **Metabase → CSV → XLSX (BR-GLASS)**
+# Projeto de Automação de Relatórios Laboratoriais (Vigiram)
 
-Estrutura de pastas:
+Este projeto automatiza a extração, consolidação e transformação de dados laboratoriais do Hospital Universitário para a geração de relatórios específicos para o sistema BR-GLASS e para a Comissão de Controle de Infecções Relacionadas à Saúde (CCIRAS).
+
+## 📁 Estrutura de Pastas
+
+Para o correto funcionamento dos scripts, o projeto **deve** seguir a seguinte estrutura de diretórios:
 
 ```
 Vigiram/
-├─ CSVtoXLSX/              ← notebook que gera os XLSX finais
-├─ metabaseToCSV/          ← notebook que gera os vigiram-*.csv intermediários
-├─ data/                   ← **todos** os .csv (entrada + intermediários)
-├─ outputs/                ← apenas os .xlsx finais
-├─ requirements.txt
-└─ README.md
+   |
+   |-- 📁 data/                 <-- Armazena TODOS os arquivos .csv (entrada + intermediários)
+   |
+   |-- 📁 outputs/              <-- Armazena APENAS os relatórios .xlsx finais
+   |
+   |-- 📁 notebooks/            <-- Contém os notebooks Jupyter do projeto
+   |    |-- MetabaseToCSV.ipynb
+   |    |-- CSVtoXLSX.ipynb
+   |    +-- GeradorRelatorioCCIRAS.ipynb
+   |
+   +-- 📜 requirements.txt     
+   +-- 📜 readme.md            
 ```
 
----
+## ⚙️ Fluxo de Trabalho
 
-## 1 ▪ Extrair os CSVs do Metabase (salvar todos em `data/`)
+O pipeline de dados é executado em fases distintas, utilizando três notebooks principais localizados na pasta `notebooks/`:
 
-* Abra a coleção **Vigiram/BR GLASS** do Metabase:
-[Coleção Vigiram/BR GLASS](http://relatorios.hc-ufpe.ebserh/collection/591-vigiram-br-glass "Coleção Vigiram/BR GLASS")
+1.  **Fase 1: Consolidação de Dados**
+    * **`notebooks/MetabaseToCSV.ipynb`**: Ponto de partida do fluxo. Ele lê múltiplos arquivos CSV brutos (exportados do Metabase), limpa, une e consolida-os em um único CSV padronizado, o `vigiram-{mes}{ano}.csv`, que é salvo na pasta `data/`.
 
-**ITS – Perfis de Resistência (Vigiram)**
+2.  **Fase 2: Geração de Relatórios**
+    * O arquivo `vigiram-*.csv` gerado serve de entrada para dois processos paralelos:
+        * **`notebooks/CSVtoXLSX.ipynb`**: Converte os dados para o formato exigido pelo sistema **BR-GLASS**. Realiza mapeamentos complexos para códigos numéricos e gera a planilha `Copia_de_Modelo_BR-GLASS_*.xlsx` na pasta `outputs/`.
+        * **`notebooks/GeradorRelatorioCCIRAS.ipynb`**: Gera um relatório analítico detalhado para a **CCIRAS**. Cria a planilha `Relatorio_CCIRAS_HC-UFPE_*.xlsx` focada em vigilância epidemiológica, mantendo os nomes originais dos dados, na pasta `outputs/`.
 
-* Ajuste o filtro **`dthr_entrada`** para o mês (ex.: *jul 1–31, 2025*).
-* Baixe em **CSV** como `its-[mmm][aa].csv` (ex.: `its-jul25.csv`).
-* Repita para cada mês necessário e salve em `data/`.
+```mermaid
+graph TD
+    subgraph "Fase 1: Extração e Consolidação"
+        A[CSVs Brutos do Metabase] -->|Salvar em /data| B(notebooks/MetabaseToCSV.ipynb);
+        B --> C[CSV Consolidado: vigiram-*.csv];
+    end
 
-**RSI (Vigiram)**
-
-* Ajuste o filtro **“Entrada Amostra”** para o mês.
-* Baixe em **CSV** como `rsi-[mmm][aa].csv` (ex.: `rsi-jul25.csv`).
-* Salve em `data/`.
-
-**AGHU (Vigiram)**
-
-* Abra o **editor SQL** do modelo.
-* Atualize a linha do período, por exemplo:
-
-  ```sql
-  AND amo.dthr_entrada >= '2025-07-01'
-  AND amo.dthr_entrada <= '2025-07-31'  -- ajuste para o mês
-  ```
-* Execute e baixe em **CSV** como `aghu-[mmm][aa].csv` (ex.: `aghu-jul25.csv`).
-* Salve em `data/`.
-
-**Contagem pacientes amostra positiva (Vigiram)**
-
-* No **SQL**, ajuste o período:
-
-  ```sql
-  WHERE
-    "source"."dthr_entrada" >= timestamp '2025-01-01 00:00:00.000'
-    AND "source"."dthr_entrada" <  timestamp '2025-07-01 00:00:00.000'
-  ```
-  *(exemplo: janeiro a junho de 2025)*
-* Execute e baixe como **`Contagem pacientes amostra positiva.csv`** em `data/`.
-
-**Contagem pacientes amostra negativa (Vigiram)**
-
-* Repita o ajuste de período (mesmo intervalo).
-* Execute e baixe como **`Contagem pacientes amostras negativas.csv`** em `data/`.
-
----
-
-## 2 ▪ Gerar os `vigiram-*.csv` com **MetabaseToCSV.ipynb**
-
-1. **Instale as dependências** (uma vez por máquina):
-
-```bash
-cd Vigiram
-python -m venv .venv
-.\.venv\Scripts\activate          # Linux/macOS: source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+    subgraph "Fase 2: Geração de Relatórios"
+        C --> D(notebooks/CSVtoXLSX.ipynb);
+        C --> E(notebooks/GeradorRelatorioCCIRAS.ipynb);
+        D --> F[Planilha BR-GLASS.xlsx];
+        E --> G[Planilha CCIRAS.xlsx];
+    end
 ```
 
-2. Abra o **VS Code** (instale as extensões **Python** e **Jupyter**).
-3. Abra `metabaseToCSV/MetabaseToCSV.ipynb`.
-4. Na **terceira célula**, ajuste o ano (ex.: `ANO = "25"`).
-5. **Run All**. Os arquivos `vigiram-[mmm][aa].csv` serão gerados em `data/`.
+## 🚀 Como Usar
 
----
+### Passo 1: Configuração do Ambiente
 
-## 3 ▪ Converter para BR-GLASS com **CSVtoXLSX.ipynb**
+1.  **Pré-requisitos:**
+    * [Python](https://www.python.org/downloads/) (versão 3.9 ou superior)
+    * [Visual Studio Code](https://code.visualstudio.com/) com as extensões **Python** e **Jupyter**.
 
-1. Abra `CSVtoXLSX/CSVtoXLSX.ipynb`.
-2. Na **última célula**, ajuste o ano (ex.: `processar_todos_arquivos_ano("25")`)
+2.  **Instalação das Dependências:**
+    * Abra um terminal na pasta raiz do projeto (`Vigiram/`).
+    * Crie e ative um ambiente virtual (altamente recomendado):
+        ```bash
+        # Criar ambiente virtual
+        python -m venv .venv
 
-3. **Run All**. O notebook:
+        # Ativar no Windows (PowerShell)
+        .\.venv\Scripts\activate
 
-   * lê todos os `vigiram-*.csv` da pasta `data/`;
-   * lê também `Contagem pacientes amostra positiva.csv` e `… amostras negativas.csv` de `data/`;
-   * grava, em `outputs/`, os arquivos finais:
-     `Copia_de_Modelo_BR-GLASS_vigiram-[mmm][aa].xlsx`.
+        # Ativar no Linux/macOS
+        source .venv/bin/activate
+        ```
+    * Instale as bibliotecas necessárias usando o `requirements.txt`:
+        ```bash
+        pip install -r requirements.txt
+        ```
 
-4. Envie os `.xlsx` de `outputs/` para a **UACAP** validar e submeter.
+### Passo 2: Extração dos CSVs do Metabase
 
----
+**Importante:** Todos os arquivos extraídos devem ser salvos diretamente na pasta `data/`.
 
-## 4 ▪ Gerar planilhas CCIRAS com **CSVtoCCIRAS.ipynb**
+* Acesse a coleção **Vigiram/BR GLASS** no Metabase através do link:
+    * **[Coleção Vigiram/BR GLASS](http://relatorios.hc-ufpe.ebserh/collection/591-vigiram-br-glass)**
 
-1. Abra `CSVtoCCIRAS/CSVtoCCIRAS.ipynb`.
-2. Ajuste os caminhos na última célula para os arquivos desejados ou use `processar_todos_arquivos_ano`.
-3. **Run All**. O notebook lê os mesmos `vigiram-*.csv` e contagens de pacientes de `data/` e gera em `outputs/` o arquivo `CCIRAS_vigiram-[mmm][aa].xlsx` com quatro abas:
-   * **Isolados Detalhados**
-   * **Sensibilidade**
-   * **Tendência Temporal**
-   * **Indicadores**
+Para cada mês desejado, extraia os seguintes relatórios:
 
----
+* **ITS – Perfis de Resistência (Vigiram)**
+    * Ajuste o filtro **`dthr_entrada`** para o mês (ex: *1 a 31 de julho de 2025*).
+    * Baixe em **CSV** e salve como `its-jul25.csv`.
 
-### Dicas
+* **RSI (Vigiram)**
+    * Ajuste o filtro **“Entrada Amostra”** para o mês.
+    * Baixe em **CSV** e salve como `rsi-jul25.csv`.
 
-* Para um mês específico:
+* **AGHU (Vigiram)**
+    * Abra o **editor SQL** do modelo.
+    * Atualize as linhas que definem o período da consulta:
+        ```sql
+        AND amo.dthr_entrada >= '2025-07-01'
+        AND amo.dthr_entrada <= '2025-07-31'  -- ajuste para o mês desejado
+        ```
+    * Execute a consulta e baixe em **CSV**, salvando como `aghu-jul25.csv`.
 
-  ```python
-  gerar_excel_brglass(
-      IN_DIR / "vigiram-jul25.csv",
-      OUT_DIR / "Copia_de_Modelo_BR-GLASS_vigiram-jul25.xlsx"
-  )
-  ```
+* **Contagem pacientes amostra positiva (Vigiram)**
+    * No editor **SQL**, ajuste o período desejado:
+        ```sql
+        WHERE
+          "source"."dthr_entrada" >= timestamp '2025-01-01 00:00:00.000'
+          AND "source"."dthr_entrada" <  timestamp '2025-07-01 00:00:00.000'
+        ```
+        *(Este exemplo cobre de Janeiro a Junho de 2025)*
+    * Execute e baixe como **`Contagem pacientes amostra positiva.csv`**.
+
+* **Contagem pacientes amostra negativa (Vigiram)**
+    * Repita o mesmo ajuste de período do item anterior.
+    * Execute e baixe como **`Contagem pacientes amostras negativas.csv`**.
+
+### Passo 3: Geração do CSV Consolidado
+
+1.  No VS Code, abra o notebook `notebooks/MetabaseToCSV.ipynb`.
+2.  Na **terceira célula**, ajuste a variável `ANO` para o ano desejado (ex: `ANO = "25"`).
+3.  Execute todas as células (`Run All`). Os arquivos `vigiram-[mmm][aa].csv` serão gerados e salvos na pasta `data/`.
+
+### Passo 4: Geração dos Relatórios Finais
+
+* **Para o relatório BR-GLASS:**
+    1.  Abra o notebook `notebooks/CSVtoXLSX.ipynb`.
+    2.  Na **última célula**, ajuste o ano na chamada da função (ex: `processar_todos_arquivos_ano("25")`).
+    3.  Execute todas as células. Os arquivos `.xlsx` serão salvos na pasta `outputs/`.
+    4.  Envie os relatórios gerados para a **UACAP** para validação e submissão.
+
+* **Para o relatório da CCIRAS:**
+    1.  Abra o notebook `notebooks/GeradorRelatorioCCIRAS.ipynb`.
+    2.  Na **última célula**, ajuste o ano na variável `ANO_A_PROCESSAR`.
+    3.  Execute todas as células. O arquivo `Relatorio_CCIRAS_HC-UFPE_*.xlsx` será salvo na pasta `outputs/`.

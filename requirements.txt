@@ -3,3 +3,4 @@ openpyxl>=3.1
 jupyterlab>=4.0
 notebook>=7.0
 ipykernel>=6.0
+openpyxl>=3.0.0
